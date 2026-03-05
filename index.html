@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Star Trek Trivia</title>
+<link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;600;700&family=Michroma&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --lcars-orange: #FF9900;
+    --lcars-blue: #9999FF;
+    --lcars-purple: #CC99CC;
+    --lcars-red: #CC6666;
+    --lcars-gold: #FFCC66;
+    --lcars-teal: #66CCCC;
+    --lcars-lavender: #9999CC;
+    --lcars-peach: #FF9966;
+    --lcars-bg: #000000;
+    --lcars-panel: #1a1a2e;
+    --lcars-text: #FF9900;
+    --lcars-text-light: #FFCC99;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--lcars-bg);
+    color: var(--lcars-text);
+    font-family: 'Exo 2', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* LCARS Frame */
+  .lcars-frame {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 10px;
+  }
+
+  .lcars-header {
+    display: flex;
+    align-items: stretch;
+    margin-bottom: 10px;
+  }
+
+  .lcars-elbow-top {
+    width: 120px;
+    min-height: 80px;
+    background: var(--lcars-orange);
+    border-radius: 0 0 0 40px;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .lcars-elbow-top::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 60px;
+    height: 100%;
+    background: var(--lcars-bg);
+    border-radius: 0 0 0 40px;
+  }
+
+  .lcars-header-bar {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 15px;
+  }
+
+  .lcars-header-pill {
+    height: 30px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    font-family: 'Antonio', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #000;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .lcars-title-area {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lcars-title {
+    font-family: 'Michroma', sans-serif;
+    font-size: 28px;
+    color: var(--lcars-gold);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(255, 204, 102, 0.4);
+  }
+
+  .lcars-header-end {
+    width: 200px;
+    height: 30px;
+    background: var(--lcars-blue);
+    border-radius: 15px;
+    align-self: center;
+  }
+
+  /* Sidebar */
+  .lcars-body {
+    display: flex;
+    flex: 1;
+    gap: 10px;
+  }
+
+  .lcars-sidebar {
+    width: 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .lcars-sidebar-block {
+    border-radius: 0 20px 20px 0;
+    padding: 10px 8px;
+    font-family: 'Antonio', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #000;
+    text-align: right;
+    letter-spacing: 1px;
+    cursor: default;
+  }
+
+  .lcars-sidebar-spacer {
+    flex: 1;
+    background: var(--lcars-orange);
+    border-radius: 0;
+    min-height: 20px;
+  }
+
+  .lcars-sidebar-bottom {
+    height: 60px;
+    background: var(--lcars-orange);
+    border-radius: 0 40px 0 0;
+    position: relative;
+  }
+
+  .lcars-sidebar-bottom::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60px;
+    height: 100%;
+    background: var(--lcars-bg);
+    border-radius: 0 40px 0 0;
+  }
+
+  /* Main Content */
+  .lcars-content {
+    flex: 1;
+    padding: 10px;
+  }
+
+  /* Score Display */
+  .score-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 8px 20px;
+    background: var(--lcars-panel);
+    border: 1px solid var(--lcars-orange);
+    border-radius: 20px;
+  }
+
+  .score-label {
+    font-family: 'Antonio', sans-serif;
+    font-size: 18px;
+    color: var(--lcars-blue);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .score-value {
+    font-family: 'Antonio', sans-serif;
+    font-size: 32px;
+    color: var(--lcars-gold);
+    letter-spacing: 2px;
+  }
+
+  .round-info {
+    font-family: 'Antonio', sans-serif;
+    font-size: 16px;
+    color: var(--lcars-teal);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* Game Board */
+  .game-board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .category-header {
+    background: var(--lcars-purple);
+    color: #000;
+    font-family: 'Antonio', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    padding: 12px 6px;
+    border-radius: 10px 10px 4px 4px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.2;
+  }
+
+  .clue-cell {
+    background: var(--lcars-blue);
+    color: #000;
+    font-family: 'Antonio', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    padding: 15px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 55px;
+    letter-spacing: 1px;
+  }
+
+  .clue-cell:hover {
+    background: var(--lcars-gold);
+    transform: scale(1.03);
+    box-shadow: 0 0 15px rgba(255, 204, 102, 0.5);
+  }
+
+  .clue-cell.used {
+    background: #2a2a3e;
+    color: #444;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .clue-cell.used:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Clue Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.92);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .modal-overlay.active {
+    display: flex;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .modal-content {
+    background: var(--lcars-panel);
+    border: 2px solid var(--lcars-orange);
+    border-radius: 30px;
+    padding: 40px;
+    max-width: 750px;
+    width: 90%;
+    position: relative;
+    animation: slideUp 0.4s ease;
+  }
+
+  .modal-category {
+    font-family: 'Antonio', sans-serif;
+    font-size: 16px;
+    color: var(--lcars-purple);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .modal-value {
+    font-family: 'Antonio', sans-serif;
+    font-size: 22px;
+    color: var(--lcars-gold);
+    letter-spacing: 2px;
+    margin-bottom: 25px;
+  }
+
+  .modal-clue {
+    font-family: 'Exo 2', sans-serif;
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--lcars-text-light);
+    line-height: 1.6;
+    margin-bottom: 35px;
+    text-align: center;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .modal-btn {
+    font-family: 'Antonio', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #000;
+  }
+
+  .btn-reveal {
+    background: var(--lcars-teal);
+  }
+
+  .btn-reveal:hover {
+    background: #88dddd;
+    box-shadow: 0 0 15px rgba(102, 204, 204, 0.5);
+  }
+
+  .btn-correct {
+    background: var(--lcars-gold);
+    display: none;
+  }
+
+  .btn-correct:hover {
+    background: #ffdd88;
+    box-shadow: 0 0 15px rgba(255, 204, 102, 0.5);
+  }
+
+  .btn-incorrect {
+    background: var(--lcars-red);
+    display: none;
+  }
+
+  .btn-incorrect:hover {
+    background: #dd8888;
+    box-shadow: 0 0 15px rgba(204, 102, 102, 0.5);
+  }
+
+  .btn-close {
+    background: var(--lcars-lavender);
+    display: none;
+  }
+
+  .btn-close:hover {
+    background: #aaaadd;
+    box-shadow: 0 0 15px rgba(153, 153, 204, 0.5);
+  }
+
+  .modal-answer {
+    display: none;
+    font-family: 'Michroma', sans-serif;
+    font-size: 20px;
+    color: var(--lcars-gold);
+    text-align: center;
+    margin-bottom: 25px;
+    padding: 15px;
+    border: 1px solid var(--lcars-gold);
+    border-radius: 15px;
+    background: rgba(255, 204, 102, 0.05);
+    text-shadow: 0 0 10px rgba(255, 204, 102, 0.3);
+  }
+
+  /* Category Selection Screen */
+  .screen {
+    display: none;
+  }
+
+  .screen.active {
+    display: block;
+  }
+
+  .category-select-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    max-width: 700px;
+    margin: 30px auto;
+  }
+
+  .category-select-card {
+    background: var(--lcars-panel);
+    border: 2px solid var(--lcars-blue);
+    border-radius: 15px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  .category-select-card:hover {
+    border-color: var(--lcars-gold);
+    background: rgba(255, 204, 102, 0.05);
+    transform: scale(1.02);
+  }
+
+  .category-select-card.selected {
+    border-color: var(--lcars-gold);
+    background: rgba(255, 204, 102, 0.1);
+    box-shadow: 0 0 15px rgba(255, 204, 102, 0.2);
+  }
+
+  .category-select-name {
+    font-family: 'Antonio', sans-serif;
+    font-size: 22px;
+    color: var(--lcars-gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .category-select-count {
+    font-family: 'Exo 2', sans-serif;
+    font-size: 13px;
+    color: var(--lcars-lavender);
+  }
+
+  .start-btn {
+    display: block;
+    margin: 30px auto;
+    font-family: 'Antonio', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    padding: 15px 50px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    background: var(--lcars-orange);
+    color: #000;
+    transition: all 0.2s ease;
+  }
+
+  .start-btn:hover {
+    background: var(--lcars-gold);
+    box-shadow: 0 0 25px rgba(255, 153, 0, 0.5);
+  }
+
+  .start-btn:disabled {
+    background: #444;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .setup-title {
+    font-family: 'Michroma', sans-serif;
+    font-size: 22px;
+    color: var(--lcars-gold);
+    text-align: center;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+
+  .setup-subtitle {
+    font-family: 'Exo 2', sans-serif;
+    font-size: 14px;
+    color: var(--lcars-lavender);
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  /* Footer */
+  .lcars-footer {
+    display: flex;
+    align-items: stretch;
+    margin-top: 10px;
+    height: 30px;
+  }
+
+  .lcars-footer-elbow {
+    width: 120px;
+    background: var(--lcars-orange);
+    border-radius: 0 0 0 0;
+    flex-shrink: 0;
+  }
+
+  .lcars-footer-bar {
+    flex: 1;
+    display: flex;
+    gap: 8px;
+    padding: 0 15px;
+    align-items: center;
+  }
+
+  .lcars-footer-pill {
+    height: 20px;
+    border-radius: 10px;
+    flex: 1;
+  }
+
+  /* Starfield background */
+  .starfield {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+  }
+
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle var(--duration) ease-in-out infinite;
+    opacity: 0;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.1; }
+    50% { opacity: var(--max-opacity); }
+  }
+
+  /* Game Over Screen */
+  .game-over {
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .game-over-title {
+    font-family: 'Michroma', sans-serif;
+    font-size: 36px;
+    color: var(--lcars-gold);
+    letter-spacing: 6px;
+    margin-bottom: 20px;
+    text-shadow: 0 0 30px rgba(255, 204, 102, 0.5);
+  }
+
+  .final-score {
+    font-family: 'Antonio', sans-serif;
+    font-size: 64px;
+    color: var(--lcars-orange);
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+  }
+
+  .final-stats {
+    font-family: 'Exo 2', sans-serif;
+    font-size: 16px;
+    color: var(--lcars-lavender);
+    margin-bottom: 30px;
+    line-height: 1.8;
+  }
+
+  .play-again-btn {
+    font-family: 'Antonio', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 15px 40px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    background: var(--lcars-orange);
+    color: #000;
+    transition: all 0.2s ease;
+  }
+
+  .play-again-btn:hover {
+    background: var(--lcars-gold);
+    box-shadow: 0 0 25px rgba(255, 153, 0, 0.5);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .lcars-sidebar { display: none; }
+    .lcars-elbow-top { width: 60px; }
+    .lcars-footer-elbow { width: 60px; }
+    .lcars-title { font-size: 18px; letter-spacing: 3px; }
+    .game-board { grid-template-columns: repeat(2, 1fr); }
+    .category-header { font-size: 12px; padding: 8px 4px; min-height: 45px; }
+    .clue-cell { font-size: 20px; padding: 10px 4px; min-height: 40px; }
+    .modal-clue { font-size: 18px; }
+    .modal-content { padding: 25px; }
+    .category-select-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="starfield" id="starfield"></div>
+
+<div class="lcars-frame">
+  <div class="lcars-header">
+    <div class="lcars-elbow-top"></div>
+    <div class="lcars-header-bar">
+      <div class="lcars-header-pill" style="background: var(--lcars-red); width: 80px;">47988</div>
+      <div class="lcars-header-pill" style="background: var(--lcars-teal); width: 60px;">NCC</div>
+      <div class="lcars-title-area">
+        <h1 class="lcars-title">Star Trek Trivia</h1>
+      </div>
+      <div class="lcars-header-end"></div>
+    </div>
+  </div>
+
+  <div class="lcars-body">
+    <div class="lcars-sidebar">
+      <div class="lcars-sidebar-block" style="background: var(--lcars-orange);">5748</div>
+      <div class="lcars-sidebar-block" style="background: var(--lcars-blue);">1701</div>
+      <div class="lcars-sidebar-block" style="background: var(--lcars-purple);">4523</div>
+      <div class="lcars-sidebar-block" style="background: var(--lcars-teal);">7492</div>
+      <div class="lcars-sidebar-block" style="background: var(--lcars-gold);">2371</div>
+      <div class="lcars-sidebar-block" style="background: var(--lcars-peach);">9834</div>
+      <div class="lcars-sidebar-spacer"></div>
+      <div class="lcars-sidebar-bottom"></div>
+    </div>
+
+    <div class="lcars-content">
+      <!-- Setup Screen -->
+      <div class="screen active" id="setupScreen">
+        <div class="setup-title">Select Categories</div>
+        <div class="setup-subtitle">Choose 4 categories for your game board</div>
+        <div class="category-select-grid" id="categorySelectGrid"></div>
+        <button class="start-btn" id="startBtn" disabled>Engage</button>
+      </div>
+
+      <!-- Game Screen -->
+      <div class="screen" id="gameScreen">
+        <div class="score-display">
+          <div class="round-info" id="roundInfo">Round 1</div>
+          <div>
+            <span class="score-label">Score: </span>
+            <span class="score-value" id="scoreDisplay">0</span>
+          </div>
+          <div>
+            <span class="score-label">Clues: </span>
+            <span class="score-value" id="cluesRemaining">40</span>
+          </div>
+        </div>
+        <div class="game-board" id="gameBoard"></div>
+      </div>
+
+      <!-- Game Over Screen -->
+      <div class="screen" id="gameOverScreen">
+        <div class="game-over">
+          <div class="game-over-title">Mission Complete</div>
+          <div class="final-score" id="finalScore">0</div>
+          <div class="final-stats" id="finalStats"></div>
+          <button class="play-again-btn" onclick="resetGame()">Play Again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lcars-footer">
+    <div class="lcars-footer-elbow"></div>
+    <div class="lcars-footer-bar">
+      <div class="lcars-footer-pill" style="background: var(--lcars-blue);"></div>
+      <div class="lcars-footer-pill" style="background: var(--lcars-purple); flex: 0.5;"></div>
+      <div class="lcars-footer-pill" style="background: var(--lcars-teal); flex: 2;"></div>
+      <div class="lcars-footer-pill" style="background: var(--lcars-gold); flex: 0.3;"></div>
+      <div class="lcars-footer-pill" style="background: var(--lcars-orange); flex: 1.5;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-content">
+    <div class="modal-category" id="modalCategory"></div>
+    <div class="modal-value" id="modalValue"></div>
+    <div class="modal-clue" id="modalClue"></div>
+    <div class="modal-answer" id="modalAnswer"></div>
+    <div class="modal-actions">
+      <button class="modal-btn btn-reveal" id="btnReveal" onclick="revealAnswer()">Reveal Answer</button>
+      <button class="modal-btn btn-correct" id="btnCorrect" onclick="markCorrect()">Correct</button>
+      <button class="modal-btn btn-incorrect" id="btnIncorrect" onclick="markIncorrect()">Incorrect</button>
+      <button class="modal-btn btn-close" id="btnClose" onclick="closeModal()">Continue</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================
+// CLUE DATABASE
+// ============================================
+const allCategories = {
+  "Stardate": {
+    tng: [
+      { clue: "In this season of TNG, the Enterprise crew encounters the Borg for the very first time when Q hurls the ship into System J-25.", answer: "What is Season 2?", difficulty: 1 },
+      { clue: "In this season of TNG, Captain Picard is assimilated by the Borg and designated Locutus.", answer: "What is Season 3?", difficulty: 1 },
+      { clue: "In this season of TNG, the Enterprise discovers that Starfleet Command has been infiltrated by parasitic alien creatures, and Picard and Riker must confront a gruesome mother creature that has taken host inside a high-ranking admiral.", answer: "What is Season 1?", difficulty: 1 },
+      { clue: "In this season of TNG, Worf experiences a series of shifts between parallel realities after returning from a bat'leth tournament.", answer: "What is Season 7?", difficulty: 2 },
+      { clue: "In this season of TNG, Picard lives an entire lifetime as a man named Katan on a dying world, all within approximately twenty five minutes aboard the Enterprise.", answer: "What is Season 5?", difficulty: 2 },
+      { clue: "In this season of TNG, Commander Riker is offered his first command of the USS Melbourne but ultimately declines.", answer: "What is Season 3?", difficulty: 2 },
+      { clue: "In this season of TNG, Counselor Troi loses her empathic abilities after a two-dimensional lifeform attaches itself to the hull of the Enterprise.", answer: "What is Season 4?", difficulty: 2 },
+      { clue: "In this season of TNG, the Enterprise encounters the Tamarian vessel Shiku Maro, and Picard must defend himself against a creature on the planet Sigma Taurus while learning to communicate with Captain Dathon.", answer: "What is Season 5?", difficulty: 3 },
+      { clue: "In this season of TNG, Data constructs a daughter, an android he names Lal, who ultimately suffers a fatal cascade failure in her positronic brain.", answer: "What is Season 3?", difficulty: 3 },
+      { clue: "In this season of TNG, Captain Jellico temporarily takes command of the Enterprise while Picard is sent on a covert mission to investigate a possible Cardassian metagenic weapon.", answer: "What is Season 6?", difficulty: 3 }
+    ],
+    ds9: [
+      { clue: "In this season of DS9, Commander Sisko and the crew first discover the stable wormhole to the Gamma Quadrant and make contact with the beings who inhabit it.", answer: "What is Season 1?", difficulty: 1 },
+      { clue: "In this season of DS9, the Dominion War officially begins when Sisko mines the entrance to the wormhole and the station falls to a combined Dominion and Cardassian force.", answer: "What is Season 5?", difficulty: 1 },
+      { clue: "In this season of DS9, Jadzia Dax is killed by Gul Dukat, who has become an emissary of the Pah-wraiths.", answer: "What is Season 6?", difficulty: 1 },
+      { clue: "In this season of DS9, Sisko punches Q in the face after Q provokes a brawl in Quark's bar.", answer: "What is Season 1?", difficulty: 2 },
+      { clue: "In this season of DS9, the crew travels back in time and interacts with Captain Kirk and the crew of the original Enterprise during a mission involving Tribbles.", answer: "What is Season 5?", difficulty: 2 },
+      { clue: "In this season of DS9, Odo is stripped of his shapeshifting abilities by the Founders as punishment for having killed another Changeling.", answer: "What is Season 4?", difficulty: 2 },
+      { clue: "In this season of DS9, Chief O'Brien is sentenced to twenty years in a virtual prison where he experiences the full duration of the sentence in only a few hours of real time.", answer: "What is Season 4?", difficulty: 2 },
+      { clue: "In this season of DS9, Jake Sisko witnesses his father's disappearance in a subspace inversion and spends the rest of his life attempting to rescue him, growing old in the process.", answer: "What is Season 4?", difficulty: 3 },
+      { clue: "In this season of DS9, Major Kira must go undercover as a Cardassian after being surgically altered to infiltrate a secret prison where Cardassians who were believed to be dead are being held.", answer: "What is Season 3?", difficulty: 3 },
+      { clue: "In this season of DS9, Quark is forced to undergo a surgical procedure to temporarily become female in order to facilitate negotiations with a Ferengi financial authority.", answer: "What is Season 3?", difficulty: 3 }
+    ],
+    voy: [
+      { clue: "In this season of Voyager, Captain Janeway forges an uneasy alliance with the Borg to combat a species from fluidic space known as Species 8472.", answer: "What is Season 3?", difficulty: 1 },
+      { clue: "In this season of Voyager, Seven of Nine discovers a signal from a Starfleet vessel in the Delta Quadrant, which leads to the crew making first contact with the USS Equinox and its morally compromised captain.", answer: "What is Season 5?", difficulty: 1 },
+      { clue: "In this season of Voyager, the crew finally reaches Earth after Admiral Janeway travels back in time to provide her younger self with advanced technology to shorten their journey.", answer: "What is Season 7?", difficulty: 1 },
+      { clue: "In this season of Voyager, the Doctor's program is transmitted to the Alpha Quadrant aboard a Hirogen communications network, and he briefly serves aboard a Prometheus class vessel.", answer: "What is Season 4?", difficulty: 2 },
+      { clue: "In this season of Voyager, Tuvok and Neelix are merged into a single being known as Tuvix after a transporter accident, and Janeway must make the controversial decision to separate them against Tuvix's wishes.", answer: "What is Season 2?", difficulty: 2 },
+      { clue: "In this season of Voyager, Tom Paris breaks the Warp 10 threshold and subsequently undergoes a bizarre mutation, devolving into an amphibian lifeform.", answer: "What is Season 2?", difficulty: 2 },
+      { clue: "In this season of Voyager, the ship encounters a region of space called the Void, and Janeway forms an alliance of stranded vessels to escape together rather than resorting to piracy.", answer: "What is Season 7?", difficulty: 2 },
+      { clue: "In this season of Voyager, Lieutenant Carey, one of the original engineering staff, is killed on an away mission, marking the loss of a character who had appeared intermittently since the pilot.", answer: "What is Season 7?", difficulty: 3 },
+      { clue: "In this season of Voyager, Chakotay and Harry Kim crash land on a frozen planet and discover that Voyager has already been destroyed, forcing them to alter the timeline to save the ship.", answer: "What is Season 5?", difficulty: 3 },
+      { clue: "In this season of Voyager, the crew discovers a Cardassian missile named Dreadnought that Torres had reprogrammed during her time with the Maquis, now headed toward an inhabited Delta Quadrant world.", answer: "What is Season 2?", difficulty: 3 }
+    ]
+  },
+  "Alien Species": {
+    tng: [
+      { clue: "This warrior species values honor above all else and is known for its ridged foreheads, love of bloodwine, and a tradition of combat rituals including the bat'leth.", answer: "What are the Klingons?", difficulty: 1 },
+      { clue: "This species is known for their pointed ears, suppression of emotion, devotion to logic, and a telepathic technique known as the mind meld.", answer: "What are the Vulcans?", difficulty: 1 },
+      { clue: "This cybernetic collective assimilates other species and their technology in a relentless pursuit of perfection, operating under a shared consciousness with no individual identity.", answer: "What are the Borg?", difficulty: 1 },
+      { clue: "This empathic species from Betazed possesses telepathic abilities that develop fully in adolescence, and their wedding custom requires all participants to be unclothed.", answer: "What are the Betazoids?", difficulty: 2 },
+      { clue: "This secretive species operates from behind a vast intelligence network, employs cloaking technology on their warships, and shares a common ancestry with the Vulcans.", answer: "What are the Romulans?", difficulty: 2 },
+      { clue: "This species appears deceptively unintelligent but employs a strategy of feigning helplessness to lure other vessels close enough to steal their technology.", answer: "What are the Pakled?", difficulty: 2 },
+      { clue: "This crystalline species communicates through vibrations and pulses of light, and a massive spaceborne example of their kind was responsible for the destruction of Data's colony on Omicron Theta.", answer: "What is the Crystalline Entity?", difficulty: 2 },
+      { clue: "This reclusive and fiercely territorial species communicates exclusively through metaphor and allegory drawn from their own mythology, making universal translation nearly useless.", answer: "What are the Tamarians?", difficulty: 3 },
+      { clue: "This proto-Vulcan species on Mintaka III begins to worship Captain Picard as a god after a Federation observation post is accidentally revealed, forcing Picard to take extraordinary measures to undo the cultural contamination.", answer: "What are the Mintakans?", difficulty: 3 },
+      { clue: "This androgynous species has evolved beyond gender entirely and considers any expression of gender identity to be a deviant condition requiring corrective psychotectic treatment.", answer: "What are the J'naii?", difficulty: 3 }
+    ],
+    ds9: [
+      { clue: "This species serves as the ruling class of the Dominion, possessing the ability to change their physical form at will, and they reside in a vast interlinked state known as the Great Link.", answer: "What are the Changelings?", difficulty: 1 },
+      { clue: "This species is known for its militaristic government, elaborate justice system in which the verdict is always determined before the trial begins, and their brutal occupation of Bajor that lasted decades.", answer: "What are the Cardassians?", difficulty: 1 },
+      { clue: "This deeply spiritual species endured decades of occupation and forced labor, and their culture is centered around their faith in the Prophets who reside within the Celestial Temple.", answer: "What are the Bajorans?", difficulty: 1 },
+      { clue: "This species engineered by the Founders serves as the military arm of the Dominion, bred for combat and maintained through a chemical dependency on a substance called Ketracel-white.", answer: "What are the Jem'Hadar?", difficulty: 2 },
+      { clue: "This species from the Gamma Quadrant serves as the diplomatic and administrative arm of the Dominion, acting as intermediaries between the Founders and their subjects.", answer: "What are the Vorta?", difficulty: 2 },
+      { clue: "This species is known for their large ears, sharp teeth, and a culture built entirely around the pursuit of profit as codified in their Rules of Acquisition.", answer: "What are the Ferengi?", difficulty: 2 },
+      { clue: "This worm-like symbiotic species bonds with a host body, and the joined individual carries the memories and experiences of all previous hosts, sometimes spanning several centuries.", answer: "What are the Trill?", difficulty: 2 },
+      { clue: "This species, the first formal delegation that the station received from the Gamma Quadrant, trapped Sisko, Kira, Bashir, and Dax inside of a board game they were playing in Quark's bar.", answer: "What are the Wadi?", difficulty: 3 },
+      { clue: "This small, furry species known for its rapid reproduction rate was at the center of a temporal investigation when the crew of the Defiant traveled back in time to the era of Captain Kirk and the original Enterprise.", answer: "What are the Tribbles?", difficulty: 3 },
+      { clue: "This enigmatic species, whose true appearance remains unknown beneath their refrigeration suits, joined the Dominion in its war against the Federation.", answer: "What are the Breen?", difficulty: 3 }
+    ],
+    voy: [
+      { clue: "This nomadic species of scavengers and organ harvesters terrorized the Delta Quadrant, often dismembering other species to use their biological components as replacements for their own deteriorating bodies.", answer: "What are the Vidiians?", difficulty: 1 },
+      { clue: "This warlike species with bony ridges along their foreheads became one of Voyager's most persistent adversaries throughout the Delta Quadrant, frequently attacking the ship to claim its technology.", answer: "What are the Kazon?", difficulty: 1 },
+      { clue: "This highly advanced species from fluidic space exists in a parallel dimension and was engaged in a devastating war with the Borg before Voyager became involved.", answer: "What are Species 8472?", difficulty: 1 },
+      { clue: "This tall, predatory species is obsessed with \"the hunt\" and travels the Delta Quadrant in pursuit of worthy prey.", answer: "What are the Hirogen?", difficulty: 2 },
+      { clue: "This species has an extremely short lifespan of approximately nine years, possesses latent telepathic abilities, and one of their kind named Kes served as a crew member aboard Voyager.", answer: "What are the Ocampa?", difficulty: 2 },
+      { clue: "This jovial and resourceful species from the Delta Quadrant is known for its spotted complexion and whisker-like facial hair, and one of their kind appointed himself as Voyager's morale officer and head chef.", answer: "What are the Talaxians?", difficulty: 2 },
+      { clue: "This highly regimented species views telepathy as a dangerous threat and conducts systematic sweeps of vessels passing through their space to detect and detain any telepathic individuals.", answer: "What are the Devore?", difficulty: 2 },
+      { clue: "This aquatic species from a planet almost entirely covered in water made first contact with Voyager when the ship became trapped beneath the ocean surface of their world.", answer: "What are the Moneans?", difficulty: 3 },
+      { clue: "This hedonistic and hospitable species possesses a spatial folding technology capable of transporting matter across forty thousand light years, but their own law forbids them from sharing it with outsiders.", answer: "What are the Sikarians?", difficulty: 3 },
+      { clue: "This Delta Quadrant species nearly destroyed Voyager over the course of a year-long conflict using temporal weaponry capable of erasing entire civilizations from history.", answer: "What are the Krenim?", difficulty: 3 }
+    ]
+  },
+  "Guest Stars": {
+    tng: [
+      { clue: "This actor, known for his role as the Candyman in the horror film of the same name, appeared in three episodes of TNG as Kurn, the brother of Worf.", answer: "Who is Tony Todd?", difficulty: 1 },
+      { clue: "A series regular in TNG's first season until she was killed, this actress returned in later seasons for several guest appearances.", answer: "Who is Denise Crosby?", difficulty: 1 },
+      { clue: "This legendary actor reprised his iconic role as Ambassador Spock in the two-part episode \"Unification,\" where he is working secretly on Romulus to pursue reunification between the Vulcans and Romulans.", answer: "Who is Leonard Nimoy?", difficulty: 1 },
+      { clue: "This actor briefly appeared as a guest star at the end of an episode from TNG's fifth season as the captain of the USS Bozeman, which had been stuck in a temporal causality loop for nearly ninety years.", answer: "Who is Kelsey Grammer?", difficulty: 2 },
+      { clue: "This actor reprised his beloved role from The Original Series when his character was discovered alive inside a transporter buffer after seventy five years, having crashed on the surface of a Dyson Sphere.", answer: "Who is James Doohan?", difficulty: 2 },
+      { clue: "This actor, a series regular on Deep Space Nine, guest starred in a TNG episode set aboard the station where he inadvertently triggered Data's first experience of dreaming.", answer: "Who is Alexander Siddig?", difficulty: 2 },
+      { clue: "This actor, a series regular on Voyager, guest starred in a TNG episode as Farek, a Ferengi doctor who hoped to study Lwaxana Troi's telepathy using mind probes.", answer: "Who is Ethan Phillips?", difficulty: 2 },
+      { clue: "This actress played Ensign Robin Lefler, a young crew member who aided Wesley Crusher in exposing a mind-controlling game that had overtaken the Enterprise.", answer: "Who is Ashley Judd?", difficulty: 3 },
+      { clue: "This actress was the voice of the Enterprise computer and appeared as a guest star in multiple episodes of both TNG and DS9.", answer: "Who is Majel Barrett?", difficulty: 3 },
+      { clue: "This actress played Kamala, an empathic metamorph being transported aboard the Enterprise as a gift to seal a peace treaty, and would later become known for her role in the 2000's era X-Men films.", answer: "Who is Famke Janssen?", difficulty: 3 }
+    ],
+    ds9: [
+      { clue: "This actor reprised his role as the Klingon Worf from TNG when his character was permanently assigned to Deep Space Nine beginning in the fourth season.", answer: "Who is Michael Dorn?", difficulty: 1 },
+      { clue: "This actor, known for his role in Princess Bride among many other films, played Grand Nagus Zek in Deep Space Nine, appearing in six of the show's seven seasons.", answer: "Who is Wallace Shawn?", difficulty: 1 },
+      { clue: "This actor, who also played Worf's brother Kurn in TNG, portrayed an older Jake Sisko in the critically acclaimed DS9 episode \"The Visitor.\"", answer: "Who is Tony Todd?", difficulty: 1 },
+      { clue: "This actor reprised his role as the omnipotent trickster Q in a first season episode of DS9, where his arrival on the station led to a memorable confrontation in which Commander Sisko punched him in the face.", answer: "Who is John de Lancie?", difficulty: 2 },
+      { clue: "This actor was both a series regular on TNG and a \"guest star\" as well when he appeared as a duplicate of his main character, created through an incident with a transporter. He reprised the role of that duplicate character in an episode of DS9.", answer: "Who is Jonathan Frakes?", difficulty: 2 },
+      { clue: "This DS9 series regular was a guest star on an episode of Star Trek Voyager where he played a Kazon that captured Commander Chakotay.", answer: "Who is Aaron Eisenberg?", difficulty: 2 },
+      { clue: "This actress was the voice of the Enterprise computer and appeared as a guest star in multiple episodes of both TNG and DS9.", answer: "Who is Majel Barrett?", difficulty: 2 },
+      { clue: "This actor, who played the role of Dr. Arnold Rosen on the show Mad Men, appeared as a guest actor on TNG, DS9, and Voyager. In DS9, he played Dr. Elias Giger who was seeking immortality by solving the problem of \"cellular boredom.\"", answer: "Who is Brian Markinson?", difficulty: 3 },
+      { clue: "This actor, known for his roles in Shawshank Redemption and Die Hard 2, played Luther Sloan, a covert operative from the secretive Starfleet organization known as Section 31, who repeatedly attempted to recruit Dr. Bashir across multiple episodes of DS9.", answer: "Who is William Sadler?", difficulty: 3 },
+      { clue: "This actor played Admiral William Ross, who appeared frequently throughout DS9 as a key Starfleet figure during the Dominion War.", answer: "Who is Barry Jenner?", difficulty: 3 }
+    ],
+    voy: [
+      { clue: "This actor reprised his role as Lieutenant Reginald Barclay from TNG in multiple episodes of Voyager, where his character became obsessed with finding a way to communicate with the stranded ship from the Alpha Quadrant.", answer: "Who is Dwight Schultz?", difficulty: 1 },
+      { clue: "This DS9 series regular was a guest star on an episode of Star Trek Voyager where he played a Kazon that captured Commander Chakotay.", answer: "Who is Aaron Eisenberg?", difficulty: 1 },
+      { clue: "This actor, a series regular on Voyager, guest starred in a TNG episode as Farek, a Ferengi doctor who hoped to study Lwaxana Troi's telepathy using mind probes.", answer: "Who is Ethan Phillips?", difficulty: 1 },
+      { clue: "This WWE wrestler turned actor was a guest star on Voyager where he fought Seven of Nine in a battle pit.", answer: "Who is Dwayne \"The Rock\" Johnson?", difficulty: 2 },
+      { clue: "This series regular on Seinfeld was a guest star on Voyager where he, and his Think Tank, attempted to acquire Seven of Nine in a trade.", answer: "Who is Jason Alexander?", difficulty: 2 },
+      { clue: "This actor and comedian played the EMH Mark II aboard the USS Prometheus, who teamed up with Voyager's Doctor to retake the ship after it had been seized by Romulans.", answer: "Who is Andy Dick?", difficulty: 2 },
+      { clue: "This actor and comedian played the EMH Mark II aboard the USS Prometheus, who teamed up with Voyager's Doctor to retake the ship after it had been seized by Romulans.", answer: "Who is Andy Dick?", difficulty: 2 },
+      { clue: "This series regular from Better Call Saul was a guest star on Voyager where he held B'Elanna Torres and Harry Kim hostage in a shared virtual reality.", answer: "Who is Michael McKean?", difficulty: 3 },
+      { clue: "This actress and comedian played Rain Robinson, an astronomer in 1996 Los Angeles who detected Voyager in orbit after the ship was thrown back in time.", answer: "Who is Sarah Silverman?", difficulty: 3 },
+      { clue: "This actor, known for his role on \"That '70s Show,\" played Annorax, a Krenim scientist who spent centuries manipulating the timeline with a temporal weapon ship in an obsessive attempt to restore his civilization to its former glory.", answer: "Who is Kurtwood Smith?", difficulty: 3 }
+    ]
+  },
+  "Name That Episode": {
+    tng: [
+      { clue: "In this premiere episode of TNG, an omnipotent being puts humanity on trial while the crew of the Enterprise must unravel the mystery of a starbase that is not what it appears to be.", answer: "What is \"Encounter at Farpoint\"?", difficulty: 1 },
+      { clue: "In this TNG episode, a holodeck recreation of a famous villain from Sherlock Holmes becomes self-aware after Geordi La Forge asks the computer to create an adversary capable of defeating Data.", answer: "What is \"Elementary, Dear Data\"?", difficulty: 1 },
+      { clue: "In this TNG episode, a temporal rift brings a previous Enterprise forward in time, creating an alternate timeline in which the Federation is locked in a losing war with the Klingons.", answer: "What is \"Yesterday's Enterprise\"?", difficulty: 1 },
+      { clue: "In this TNG episode, Captain Picard is stranded on a planet with an alien captain who can only communicate through narrative metaphor, and together they must face a dangerous creature to survive.", answer: "What is \"Darmok\"?", difficulty: 1 },
+      { clue: "In this first season episode of TNG, Wesley Crusher is sentenced to death on a planet that appears to be a paradise after unknowingly violating one of the society's absolute laws.", answer: "What is \"Justice\"?", difficulty: 2 },
+      { clue: "In this first season episode of TNG, a malevolent entity formed from a tar-like substance kills Natasha Yar during a rescue mission on Vagra II.", answer: "What is \"Skin of Evil\"?", difficulty: 2 },
+      { clue: "In this TNG episode, a Federation observation post is accidentally exposed to the inhabitants of Mintaka III, leading the proto-Vulcan society to believe that Captain Picard is a divine being.", answer: "What is \"Who Watches the Watchers\"?", difficulty: 2 },
+      { clue: "In this TNG episode, Dr. Beverly Crusher finds herself in a reality where crew members are vanishing one by one and no one else remembers they ever existed, eventually discovering she is trapped inside a static warp bubble.", answer: "What is \"Remember Me\"?", difficulty: 3 },
+      { clue: "In this TNG episode, Data attempts to pursue a romantic relationship with a crew member, creating specific subroutines to simulate the behaviors of a boyfriend.", answer: "What is \"In Theory\"?", difficulty: 3 },
+      { clue: "In this TNG episode, the entire crew loses their memories and an unknown operative is discovered among them, manipulating the ship into launching an attack against his species' enemy.", answer: "What is \"Conundrum\"?", difficulty: 3 }
+    ],
+    ds9: [
+      { clue: "In this premiere episode of DS9, Commander Sisko takes command of an abandoned Cardassian space station orbiting Bajor and discovers a stable wormhole leading to the Gamma Quadrant.", answer: "What is \"Emissary\"?", difficulty: 1 },
+      { clue: "In this first season episode of DS9, a hidden Cardassian sabotage device activates a virus that causes the crew to speak in incomprehensible gibberish, spreading rapidly through the station.", answer: "What is \"Babel\"?", difficulty: 1 },
+      { clue: "In this DS9 episode, an old automated Cardassian security program is accidentally activated on the station, escalating through increasingly dangerous countermeasures and threatening to destroy the entire station.", answer: "What is \"Civil Defense\"?", difficulty: 1 },
+      { clue: "In this DS9 season premiere, Worf joins the crew of Deep Space Nine as a massive Klingon fleet arrives at the station and launches an invasion of Cardassia, fundamentally altering the political landscape of the Alpha Quadrant.", answer: "What is \"The Way of the Warrior\"?", difficulty: 1 },
+      { clue: "In this DS9 season premiere, Sisko brings a powerful new warship to the station and leads a mission into the Gamma Quadrant where Odo discovers the true identity and location of his people.", answer: "What is \"The Search\"?", difficulty: 2 },
+      { clue: "In this two-part DS9 episode, a transporter accident sends Sisko, Bashir, and Dax back in time to early 21st century San Francisco where they become entangled in a pivotal uprising among citizens confined to government-designated sanctuary districts.", answer: "What is \"Past Tense\"?", difficulty: 2 },
+      { clue: "In this DS9 episode, the crew of the Defiant is sent back in time and must navigate through the events of a classic Original Series episode while preventing an assassination attempt, all while surrounded by rapidly multiplying small furry creatures.", answer: "What is \"Trials and Tribble-ations\"?", difficulty: 2 },
+      { clue: "In this DS9 episode, a young writer visits an elderly Jake Sisko on a stormy night to learn why he gave up his promising literary career, and discovers that he has spent his entire life trying to rescue his father from a subspace phenomenon.", answer: "What is \"The Visitor\"?", difficulty: 3 },
+      { clue: "In this DS9 episode, Quark, Rom, and Nog accidentally travel back in time to 1947 Earth and become the basis for one of the most famous alleged UFO incidents in American history.", answer: "What is \"Little Green Men\"?", difficulty: 3 },
+      { clue: "In this DS9 episode, the apparent death of a beloved and famously silent bar patron leads to a frantic scramble among several parties who all claim to have a stake in his hidden fortune.", answer: "What is \"Who Mourns for Morn\"?", difficulty: 3 }
+    ],
+    voy: [
+      { clue: "In this premiere episode of Voyager, Captain Janeway and her crew are pulled seventy thousand light years from home to the Delta Quadrant by a powerful alien entity, stranding them far from Federation space.", answer: "What is \"Caretaker\"?", difficulty: 1 },
+      { clue: "In this Voyager episode, a transporter accident merges two crew members into a single individual who develops his own identity and pleads to remain alive, forcing Captain Janeway to make one of her most controversial decisions.", answer: "What is \"Tuvix\"?", difficulty: 1 },
+      { clue: "In this Voyager episode, the crew discovers two Ferengi who had previously traveled through an unstable wormhole to the Delta Quadrant and have established themselves as gods among a pre-warp civilization.", answer: "What is \"False Profits\"?", difficulty: 1 },
+      { clue: "In this two-part Voyager episode, the ship endures a year of relentless attacks from a species wielding temporal weaponry while their leader obsessively manipulates the timeline from a ship that exists outside of normal space-time.", answer: "What is \"Year of Hell\"?", difficulty: 1 },
+      { clue: "In this Voyager episode, the Doctor embarks on his first away mission, entering a holodeck recreation of an ancient Earth legend to rescue crew members who have mysteriously vanished within the program.", answer: "What is \"Heroes and Demons\"?", difficulty: 2 },
+      { clue: "In this Voyager episode, Captain Janeway invokes a top-secret Starfleet protocol that supersedes even the Prime Directive, requiring her to destroy the most powerful and dangerous molecule known to exist before it can destabilize subspace.", answer: "What is \"The Omega Directive\"?", difficulty: 2 },
+      { clue: "In this Voyager episode, a group of brilliant minds operating from a secluded vessel offers to solve Voyager's problems in exchange for Seven of Nine, forcing Janeway to outwit them to keep her crew member.", answer: "What is \"Think Tank\"?", difficulty: 2 },
+      { clue: "In this Voyager episode, Harry Kim wakes up on Earth in an alternate timeline where he was never assigned to Voyager, and must find a way to restore the original timeline despite having everything he ever wanted.", answer: "What is \"Non Sequitur\"?", difficulty: 3 },
+      { clue: "In this Voyager episode, the ship becomes trapped in orbit of a planet where time passes at an enormously accelerated rate, and the crew witnesses an entire civilization evolve from its primitive beginnings to a spacefaring society in a matter of days.", answer: "What is \"Blink of an Eye\"?", difficulty: 3 },
+      { clue: "In this Voyager episode, a group of con artists who have been impersonating the captain and senior officers are discovered to have been swindling species across the Delta Quadrant using Voyager's reputation.", answer: "What is \"Live Fast and Prosper\"?", difficulty: 3 }
+    ]
+  }
+};
+
+// ============================================
+// GAME STATE
+// ============================================
+let gameState = {
+  score: 0,
+  correct: 0,
+  incorrect: 0,
+  selectedCategories: [],
+  boardClues: [],
+  currentClue: null,
+  currentValue: 0,
+  cluesRemaining: 0
+};
+
+// ============================================
+// STARFIELD
+// ============================================
+function createStarfield() {
+  const field = document.getElementById('starfield');
+  for (let i = 0; i < 150; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    const size = Math.random() * 2.5 + 0.5;
+    star.style.width = size + 'px';
+    star.style.height = size + 'px';
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.setProperty('--duration', (Math.random() * 4 + 2) + 's');
+    star.style.setProperty('--max-opacity', Math.random() * 0.6 + 0.2);
+    star.style.animationDelay = Math.random() * 4 + 's';
+    field.appendChild(star);
+  }
+}
+
+// ============================================
+// CATEGORY SELECTION
+// ============================================
+function initCategorySelection() {
+  const grid = document.getElementById('categorySelectGrid');
+  grid.innerHTML = '';
+  const categoryNames = Object.keys(allCategories);
+
+  categoryNames.forEach(name => {
+    const totalClues = Object.values(allCategories[name]).reduce((sum, arr) => sum + arr.length, 0);
+    const card = document.createElement('div');
+    card.className = 'category-select-card';
+    card.innerHTML = `
+      <div class="category-select-name">${name}</div>
+      <div class="category-select-count">${totalClues} clues available</div>
+    `;
+    card.addEventListener('click', () => toggleCategory(card, name));
+    grid.appendChild(card);
+  });
+}
+
+function toggleCategory(card, name) {
+  const idx = gameState.selectedCategories.indexOf(name);
+  if (idx > -1) {
+    gameState.selectedCategories.splice(idx, 1);
+    card.classList.remove('selected');
+  } else {
+    if (gameState.selectedCategories.length >= 4) return;
+    gameState.selectedCategories.push(name);
+    card.classList.add('selected');
+  }
+  document.getElementById('startBtn').disabled = gameState.selectedCategories.length !== 4;
+}
+
+// ============================================
+// BUILD GAME BOARD
+// ============================================
+function buildBoard() {
+  gameState.boardClues = [];
+
+  gameState.selectedCategories.forEach(catName => {
+    const category = allCategories[catName];
+    const allClues = [...category.tng, ...category.ds9, ...category.voy];
+
+    // Sort by difficulty
+    const easy = allClues.filter(c => c.difficulty === 1);
+    const medium = allClues.filter(c => c.difficulty === 2);
+    const hard = allClues.filter(c => c.difficulty === 3);
+
+    // Shuffle each difficulty
+    shuffle(easy);
+    shuffle(medium);
+    shuffle(hard);
+
+    // Pick clues: 3 easy, 4 medium, 3 hard = 10
+    const selected = [
+      ...easy.slice(0, 3),
+      ...medium.slice(0, 4),
+      ...hard.slice(0, 3)
+    ];
+
+    // If we don't have enough in a tier, fill from others
+    while (selected.length < 10 && (easy.length > 3 || medium.length > 4 || hard.length > 3)) {
+      const remaining = allClues.filter(c => !selected.includes(c));
+      if (remaining.length > 0) {
+        selected.push(remaining[0]);
+      } else break;
+    }
+
+    // Sort by difficulty for point values
+    selected.sort((a, b) => a.difficulty - b.difficulty);
+
+    gameState.boardClues.push({
+      name: catName,
+      clues: selected.map((clue, i) => ({
+        ...clue,
+        value: (i + 1) * 100,
+        used: false
+      }))
+    });
+  });
+
+  gameState.cluesRemaining = gameState.boardClues.reduce((sum, cat) => sum + cat.clues.length, 0);
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+function renderBoard() {
+  const board = document.getElementById('gameBoard');
+  board.innerHTML = '';
+
+  // Category headers
+  gameState.boardClues.forEach(cat => {
+    const header = document.createElement('div');
+    header.className = 'category-header';
+    header.textContent = cat.name;
+    board.appendChild(header);
+  });
+
+  // Clue cells (row by row)
+  const maxClues = Math.max(...gameState.boardClues.map(c => c.clues.length));
+  for (let row = 0; row < maxClues; row++) {
+    gameState.boardClues.forEach((cat, catIdx) => {
+      const cell = document.createElement('div');
+      if (row < cat.clues.length) {
+        const clue = cat.clues[row];
+        cell.className = 'clue-cell' + (clue.used ? ' used' : '');
+        cell.textContent = clue.used ? '' : clue.value;
+        cell.addEventListener('click', () => openClue(catIdx, row));
+      } else {
+        cell.className = 'clue-cell used';
+      }
+      board.appendChild(cell);
+    });
+  }
+
+  document.getElementById('scoreDisplay').textContent = gameState.score;
+  document.getElementById('cluesRemaining').textContent = gameState.cluesRemaining;
+}
+
+// ============================================
+// CLUE MODAL
+// ============================================
+function openClue(catIdx, clueIdx) {
+  const cat = gameState.boardClues[catIdx];
+  const clue = cat.clues[clueIdx];
+  if (clue.used) return;
+
+  gameState.currentClue = { catIdx, clueIdx };
+  gameState.currentValue = clue.value;
+
+  document.getElementById('modalCategory').textContent = cat.name;
+  document.getElementById('modalValue').textContent = clue.value + ' points';
+  document.getElementById('modalClue').textContent = clue.clue;
+  document.getElementById('modalAnswer').textContent = clue.answer;
+  document.getElementById('modalAnswer').style.display = 'none';
+
+  document.getElementById('btnReveal').style.display = 'inline-block';
+  document.getElementById('btnCorrect').style.display = 'none';
+  document.getElementById('btnIncorrect').style.display = 'none';
+  document.getElementById('btnClose').style.display = 'none';
+
+  document.getElementById('modal').classList.add('active');
+}
+
+function revealAnswer() {
+  document.getElementById('modalAnswer').style.display = 'block';
+  document.getElementById('btnReveal').style.display = 'none';
+  document.getElementById('btnCorrect').style.display = 'inline-block';
+  document.getElementById('btnIncorrect').style.display = 'inline-block';
+}
+
+function markCorrect() {
+  const { catIdx, clueIdx } = gameState.currentClue;
+  gameState.score += gameState.currentValue;
+  gameState.correct++;
+  gameState.boardClues[catIdx].clues[clueIdx].used = true;
+  gameState.cluesRemaining--;
+
+  document.getElementById('btnCorrect').style.display = 'none';
+  document.getElementById('btnIncorrect').style.display = 'none';
+  document.getElementById('btnClose').style.display = 'inline-block';
+}
+
+function markIncorrect() {
+  const { catIdx, clueIdx } = gameState.currentClue;
+  gameState.score -= gameState.currentValue;
+  gameState.incorrect++;
+  gameState.boardClues[catIdx].clues[clueIdx].used = true;
+  gameState.cluesRemaining--;
+
+  document.getElementById('btnCorrect').style.display = 'none';
+  document.getElementById('btnIncorrect').style.display = 'none';
+  document.getElementById('btnClose').style.display = 'inline-block';
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('active');
+  renderBoard();
+
+  if (gameState.cluesRemaining <= 0) {
+    showGameOver();
+  }
+}
+
+// ============================================
+// GAME OVER
+// ============================================
+function showGameOver() {
+  document.getElementById('gameScreen').classList.remove('active');
+  document.getElementById('gameOverScreen').classList.add('active');
+
+  const total = gameState.correct + gameState.incorrect;
+  const pct = total > 0 ? Math.round((gameState.correct / total) * 100) : 0;
+
+  document.getElementById('finalScore').textContent = gameState.score;
+  document.getElementById('finalStats').innerHTML = `
+    Correct: ${gameState.correct} / ${total}<br>
+    Accuracy: ${pct}%<br>
+    Categories: ${gameState.selectedCategories.join(' • ')}
+  `;
+}
+
+// ============================================
+// RESET
+// ============================================
+function resetGame() {
+  gameState = {
+    score: 0,
+    correct: 0,
+    incorrect: 0,
+    selectedCategories: [],
+    boardClues: [],
+    currentClue: null,
+    currentValue: 0,
+    cluesRemaining: 0
+  };
+
+  document.getElementById('gameOverScreen').classList.remove('active');
+  document.getElementById('gameScreen').classList.remove('active');
+  document.getElementById('setupScreen').classList.add('active');
+
+  initCategorySelection();
+}
+
+// ============================================
+// START GAME
+// ============================================
+document.getElementById('startBtn').addEventListener('click', () => {
+  buildBoard();
+
+  document.getElementById('setupScreen').classList.remove('active');
+  document.getElementById('gameScreen').classList.add('active');
+
+  renderBoard();
+});
+
+// ============================================
+// INIT
+// ============================================
+createStarfield();
+initCategorySelection();
+</script>
+</body>
+</html>
